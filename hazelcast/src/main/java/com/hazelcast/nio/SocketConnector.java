@@ -93,7 +93,7 @@ public class SocketConnector implements Runnable {
             throws Exception {
         final SocketChannel socketChannel = SocketChannel.open();
         connectionManager.initSocket(socketChannel.socket());
-        bindSocket(socketChannel);
+        //bindSocket(socketChannel);
         final String message = "Connecting to " + socketAddress
                                + ", timeout: " + timeout
                                + ", bind-any: " + connectionManager.ioService.isSocketBindAny();

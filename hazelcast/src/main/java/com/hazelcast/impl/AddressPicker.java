@@ -73,13 +73,17 @@ class AddressPicker {
             serverSocket.setSoTimeout(1000);
             InetSocketAddress isa;
             int port = networkConfig.getPort();
+            
+            int localBindPort = getLocalBindPort(node.getConfig());
+            AddressDefinition localBindAddressDef = getLocalBindAddressDef(node.getConfig());
+            
             Throwable error = null;
             for (int i = 0; i < 100; i++) {
                 try {
                     if (bindAny) {
                         isa = new InetSocketAddress(port);
                     } else {
-                        isa = new InetSocketAddress(bindAddressDef.inetAddress, port);
+                        isa = new InetSocketAddress(localBindAddressDef.inetAddress, localBindPort);
                     }
                     log(Level.FINEST, "Trying to bind inet socket address:" + isa);
                     serverSocket.bind(isa, 100);
@@ -252,6 +256,19 @@ class AddressPicker {
             }
         }
         return null;
+    }
+    
+    private AddressDefinition getLocalBindAddressDef(Config config) throws UnknownHostException {
+    	String address = config.getProperty("hazelcast.local.localBindAddress");
+        
+        return new AddressDefinition(address, InetAddress.getByName(address));
+    }
+    
+    private int getLocalBindPort(Config config) throws UnknownHostException {
+
+    	String port = config.getProperty("hazelcast.local.localBindPort");
+        
+        return Integer.parseInt(port);
     }
     
     // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6402758
